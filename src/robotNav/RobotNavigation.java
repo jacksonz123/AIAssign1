@@ -10,11 +10,13 @@ public class RobotNavigation {
 	//the number of methods programmed into nPuzzler
 	public static final int METHOD_COUNT = 6;
 	public static SearchMethod[] lMethods;
+	//For Manipulating Cost Set Up
+	private static final boolean defaultCost = false;
 	
 	public static void main(String[] args) {
 		//Create method objects
 		InitMethods();
-		
+				
 		String method = args[1];
 		SearchMethod thisMethod = null;
 		
@@ -32,7 +34,7 @@ public class RobotNavigation {
 		Map initialMap = readMapFile(args[0]);
 
 		// Solve the puzzle, using the method that the user chose
-		Direction[] thisSolution = thisMethod.Solve(initialMap);
+		Direction[] thisSolution = thisMethod.Solve(initialMap, defaultCost);
 
 		//Print information about this solution
 		System.out.println(args[0] + "   " + method + "   " + thisMethod.Searched.size());
@@ -44,12 +46,15 @@ public class RobotNavigation {
 		}
 		else
 		{
+			int totalCost = 0;
 			//We found a solution, print all the steps to success!
 			for(int j = 0; j < thisSolution.length; j++)
 			{
+				totalCost += defaultCost ? 1 : getCost(thisSolution[j]);
 				System.out.print(thisSolution[j].toString() + ";");
 			}
 			System.out.println();
+			System.out.println("Total Cost: " + totalCost);
 		}
 	}
 	
@@ -166,6 +171,21 @@ public class RobotNavigation {
 		System.exit(1);
 
 		return null;
+	}
+	
+	private static int getCost(Direction aDirection) {
+		switch(aDirection) {
+			case Right:
+			case Left:
+				return 2;
+			case Up:
+				return 4;
+			case Down:
+				return 1;
+			default:
+				break;
+		}
+		return 0;
 	}
 
 }

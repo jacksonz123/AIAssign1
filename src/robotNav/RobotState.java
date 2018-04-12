@@ -12,25 +12,28 @@ public class RobotState implements Comparable<RobotState> {
 	public int HeuristicValue;
 	private int EvaluationFunction;
 	public Direction PathFromParent;
+	//For Manipulating Cost Set Up
+	private static boolean defaultCost;
 
 	// For Creating Child states
 	public RobotState(RobotState aParent, Direction aFromParent, Map aMap) {
 		Parent = aParent;
 		PathFromParent = aFromParent;
 		map = aMap;
-		Cost = Parent.Cost + 1;
+		Cost = defaultCost ? Parent.Cost + 1 : Parent.Cost;
 		EvaluationFunction = 0;
 		HeuristicValue = 0;
 	}
 
 	// For initial state
-	public RobotState(Map aMap) {
+	public RobotState(Map aMap, boolean aDefaultCost) {
 		Parent = null;
 		PathFromParent = null;
 		Cost = 0;
 		map = aMap;
 		EvaluationFunction = 0;
 		HeuristicValue = 0;
+		defaultCost = aDefaultCost;
 	}
 
 	public int getEvaluationFunction() {
@@ -92,41 +95,6 @@ public class RobotState implements Comparable<RobotState> {
 				result.add(Direction.Right);
 		}
 		
-		/*
-		if (robotLocation[0] == 0) {
-			// Can check only right of the robot
-			// Check if there is not a wall there
-			if (map.map[robotLocation[0] + 1][robotLocation[1]] != 'W')
-				result.add(Direction.Right);
-		} else if (robotLocation[0] == (map.width - 1)) {
-			// Checking edge of map
-			if (map.map[robotLocation[0] - 1][robotLocation[1]] != 'W')
-				result.add(Direction.Left);
-		} else {
-			if (map.map[robotLocation[0] + 1][robotLocation[1]] != 'W')
-				result.add(Direction.Right);
-
-			if (map.map[robotLocation[0] - 1][robotLocation[1]] != 'W')
-				result.add(Direction.Left);
-		}
-
-		if (robotLocation[1] == 0) {
-			// the blank cell is already as far up as it will go, check only if it can move
-			// down
-			if (map.map[robotLocation[0]][robotLocation[1] + 1] != 'W')
-				result.add(Direction.Down);
-		} else if (robotLocation[1] == (map.length - 1)) {
-			if (map.map[robotLocation[0]][robotLocation[1] - 1] != 'W')
-				result.add(Direction.Up);
-		} else {
-			if (map.map[robotLocation[0]][robotLocation[1] - 1] != 'W')
-				result.add(Direction.Up);
-
-			if (map.map[robotLocation[0]][robotLocation[1] + 1] != 'W')
-				result.add(Direction.Down);
-		}
-		*/
-		
 		// To change type from List to Array
 		Direction[] possibleDirections = new Direction[result.size()];
 		possibleDirections = result.toArray(possibleDirections);
@@ -151,16 +119,28 @@ public class RobotState implements Comparable<RobotState> {
 			if (aDirection == Direction.Up) {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0]][robotLocation[1] - 1] = 'X';
+				if (!defaultCost) {
+					result.Cost += 4;
+				}
 			} else if (aDirection == Direction.Down) {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0]][robotLocation[1] + 1] = 'X';
+				if (!defaultCost) {
+					result.Cost += 1;
+				}
 			} else if (aDirection == Direction.Left) {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0] - 1][robotLocation[1]] = 'X';
+				if (!defaultCost) {
+					result.Cost += 2;
+				}
 			} else // aDirection == Right;
 			{
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0] + 1][robotLocation[1]] = 'X';
+				if (!defaultCost) {
+					result.Cost += 2;
+				}
 			}
 			return result;
 		} catch (IndexOutOfBoundsException ex) {

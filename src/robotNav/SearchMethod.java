@@ -6,7 +6,7 @@ public abstract class SearchMethod {
 	public String code;				//the code used to identify the method at the command line
 	public String longName;			//the actual name of the method.
 
-	public abstract Direction[] Solve(Map navMap);
+	public abstract Direction[] Solve(Map navMap, boolean aDefualtCost);
 	
 	//The fringe needs to be a Queue and a Stack.
 	//LinkedList implements both interfaces.

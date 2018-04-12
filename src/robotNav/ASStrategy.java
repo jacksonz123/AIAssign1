@@ -29,10 +29,10 @@ public class ASStrategy extends SearchMethod {
 		}
 	}
 	
-	public Direction[] Solve(Map navMap)
+	public Direction[] Solve(Map navMap, boolean aDefualtCost)
 	{
 		//put the start state in the Fringe to get explored.
-		addToFrontier(new RobotState(navMap));
+		addToFrontier(new RobotState(navMap, aDefualtCost));
 		while(Frontier.size() > 0)
 		{
 			//get the next State

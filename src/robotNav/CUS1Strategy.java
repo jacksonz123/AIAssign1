@@ -22,9 +22,9 @@ public class CUS1Strategy extends SearchMethod {
 		return thisState;
 	}
 
-	public Direction[] Solve(Map navigationMap) {
+	public Direction[] Solve(Map navigationMap, boolean aDefualtCost) {
 		// put the start state in the Fringe to get explored.
-		addToFrontier(new RobotState(navigationMap));
+		addToFrontier(new RobotState(navigationMap, aDefualtCost));
 		while (Frontier.size() > 0) {
 			// get the next State
 			RobotState thisState = popFrontier();
