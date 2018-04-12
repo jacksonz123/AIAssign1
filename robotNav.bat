@@ -1,2 +1,2 @@
 @echo off
-java -cp bin/ robotNav/RobotNavigation %1 %2
+java -cp bin/ robotNav/RobotNavigation %1 %2 %3

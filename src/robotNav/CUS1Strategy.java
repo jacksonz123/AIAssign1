@@ -7,8 +7,8 @@ import java.util.LinkedList;
 public class CUS1Strategy extends SearchMethod {
 
 	public CUS1Strategy() {
-		code = "C1";
-		longName = "Custom Uninformed Search";
+		code = "UCS";
+		longName = "Uniform Cost Search";
 		Frontier = new LinkedList<RobotState>();
 		Searched = new LinkedList<RobotState>();
 	}

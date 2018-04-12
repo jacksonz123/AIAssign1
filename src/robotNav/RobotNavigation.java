@@ -11,12 +11,20 @@ public class RobotNavigation {
 	public static final int METHOD_COUNT = 6;
 	public static SearchMethod[] lMethods;
 	//For Manipulating Cost Set Up
-	private static final boolean defaultCost = false;
+	private static boolean defaultCost;
 	
 	public static void main(String[] args) {
 		//Create method objects
 		InitMethods();
-				
+		
+		//Set up to accept default costing via args
+		if (args.length == 3) {
+			defaultCost = Boolean.parseBoolean(args[2]);
+		}
+		else {
+			defaultCost = true;
+		}
+								
 		String method = args[1];
 		SearchMethod thisMethod = null;
 		
