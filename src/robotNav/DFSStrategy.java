@@ -63,7 +63,7 @@ public class DFSStrategy extends SearchMethod {
 	public boolean addToFrontier(RobotState aState)
 	{
 		//if this state has Searched before
-		if(Searched.contains(aState))
+		if(aState.GetNodesToState().contains(aState) || Frontier.contains(aState))
 		{
 			//discard it
 			return false;

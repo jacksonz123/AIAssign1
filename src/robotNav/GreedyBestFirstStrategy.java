@@ -18,7 +18,7 @@ public class GreedyBestFirstStrategy extends SearchMethod {
 	{
 		//We only want to add the new state to the fringe if it doesn't exist
 		// in the fringe or the searched list.
-		if(Searched.contains(aState))
+		if(aState.GetNodesToState().contains(aState) || Frontier.contains(aState))
 		{
 			return false;
 		}

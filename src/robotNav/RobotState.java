@@ -1,7 +1,9 @@
 package robotNav;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class RobotState implements Comparable<RobotState> {
@@ -12,7 +14,7 @@ public class RobotState implements Comparable<RobotState> {
 	public int HeuristicValue;
 	private int EvaluationFunction;
 	public Direction PathFromParent;
-	//For Manipulating Cost Set Up
+	// For Manipulating Cost Set Up
 	private static boolean defaultCost;
 
 	// For Creating Child states
@@ -70,41 +72,42 @@ public class RobotState implements Comparable<RobotState> {
 			System.out.println("Could Not Find robot when getting Possible Actions! Aborting...");
 			System.exit(1);
 		}
-		//Check if can move up on map
+		// Check if can move up on map
 		if (robotLocation[1] > 0) {
-			//check for wall
+			// check for wall
 			if (map.map[robotLocation[0]][robotLocation[1] - 1] != 'W')
-				result.add(Direction.Up); //Add Direction
+				result.add(Direction.Up); // Add Direction
 		}
-		
-		//check if can move left on map
+
+		// check if can move left on map
 		if (robotLocation[0] > 0) {
 			if (map.map[robotLocation[0] - 1][robotLocation[1]] != 'W')
 				result.add(Direction.Left);
 		}
-		
-		//check if can move down
+
+		// check if can move down
 		if (robotLocation[1] < map.length - 1) {
 			if (map.map[robotLocation[0]][robotLocation[1] + 1] != 'W')
 				result.add(Direction.Down);
 		}
-		
-		//check if can move right
+
+		// check if can move right
 		if (robotLocation[0] < map.width - 1) {
 			if (map.map[robotLocation[0] + 1][robotLocation[1]] != 'W')
 				result.add(Direction.Right);
 		}
-		
+
 		// To change type from List to Array
 		Direction[] possibleDirections = new Direction[result.size()];
 		possibleDirections = result.toArray(possibleDirections);
-		
+
 		return possibleDirections;
 	}
 
 	public RobotState move(Direction aDirection) throws CantMoveThatWayException {
 		// first, create the new one (the one to return)
-		RobotState result = new RobotState(this, aDirection, new Map(cloneArray(this.map.map), this.map.length, this.map.width, this.map.goalStateCoordinates));
+		RobotState result = new RobotState(this, aDirection,
+				new Map(cloneArray(this.map.map), this.map.length, this.map.width, this.map.goalStateCoordinates));
 
 		// find the robots location
 		int[] robotLocation = { 0, 0 };
@@ -215,14 +218,21 @@ public class RobotState implements Comparable<RobotState> {
 			return result;
 		}
 	}
-	
-	private char[][] cloneArray(char[][] cloneMe)
-	{
+
+	public LinkedList<RobotState> GetNodesToState() {
+		LinkedList<RobotState> result = new LinkedList<RobotState>();
+		RobotState parentState = Parent;
+		while (parentState != null) {
+			result.add(parentState);
+			parentState = parentState.Parent;
+		}
+		return result;
+	}
+
+	private char[][] cloneArray(char[][] cloneMe) {
 		char[][] result = new char[cloneMe.length][cloneMe[0].length];
-		for(int i = 0; i < cloneMe.length; i++)
-		{
-			for(int j = 0; j < cloneMe[i].length; j++)
-			{
+		for (int i = 0; i < cloneMe.length; i++) {
+			for (int j = 0; j < cloneMe[i].length; j++) {
 				result[i][j] = cloneMe[i][j];
 			}
 		}

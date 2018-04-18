@@ -60,7 +60,7 @@ public class CUS1Strategy extends SearchMethod {
 
 	public boolean addToFrontier(RobotState aState) {
 		// if this state has been found before,
-		if (Searched.contains(aState)) {
+		if (aState.GetNodesToState().contains(aState) || Frontier.contains(aState)) {
 			// discard it
 			return false;
 		} else {
