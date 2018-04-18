@@ -40,7 +40,7 @@ public class Map {
 		}
 	}
 
-	//For Visualisation of Map
+	// For Visualisation of Map
 	public void printMap() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < length; j++) {

@@ -105,7 +105,6 @@ public class RobotState implements Comparable<RobotState> {
 	}
 
 	public RobotState move(Direction aDirection) throws CantMoveThatWayException {
-		// first, create the new one (the one to return)
 		RobotState result = new RobotState(this, aDirection,
 				new Map(cloneArray(this.map.map), this.map.length, this.map.width, this.map.goalStateCoordinates));
 
@@ -118,7 +117,6 @@ public class RobotState implements Comparable<RobotState> {
 			System.exit(1);
 		}
 		try {
-			// move the blank cell in the new child map.map
 			if (aDirection == Direction.Up) {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0]][robotLocation[1] - 1] = 'X';
@@ -137,8 +135,7 @@ public class RobotState implements Comparable<RobotState> {
 				if (!defaultCost) {
 					result.Cost += 2;
 				}
-			} else // aDirection == Right;
-			{
+			} else {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0] + 1][robotLocation[1]] = 'X';
 				if (!defaultCost) {
@@ -202,13 +199,10 @@ public class RobotState implements Comparable<RobotState> {
 	public Direction[] GetPathToState() {
 		Direction result[];
 
-		if (Parent == null) // If this is the root node, there is no path!
-		{
+		if (Parent == null) {
 			result = new Direction[0];
 			return result;
-		} else // Other wise, path to here is the path to parent
-				// plus parent to here
-		{
+		} else {
 			Direction[] pathToParent = Parent.GetPathToState();
 			result = new Direction[pathToParent.length + 1];
 			for (int i = 0; i < pathToParent.length; i++) {

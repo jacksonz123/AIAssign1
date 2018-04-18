@@ -6,58 +6,40 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RobotNavigation {
-	
-	//the number of methods programmed into nPuzzler
+
 	public static final int METHOD_COUNT = 6;
 	public static SearchMethod[] lMethods;
-	//For Manipulating Cost Set Up
 	private static boolean defaultCost;
-	
+
 	public static void main(String[] args) {
-		//Create method objects
 		InitMethods();
-		
-		//Set up to accept default costing via args
+
 		if (args.length == 3) {
 			defaultCost = Boolean.parseBoolean(args[2]);
-		}
-		else {
+		} else {
 			defaultCost = true;
 		}
-								
+
 		String method = args[1];
 		SearchMethod thisMethod = null;
-		
-		//determine which method the user wants to use to solve the puzzles
-		for(int i = 0; i < METHOD_COUNT; i++)
-		{
-			//do they want this one?
-			if(lMethods[i].code.compareTo(method) == 0)
-			{
-				//yes, use this method.
+
+		for (int i = 0; i < METHOD_COUNT; i++) {
+			if (lMethods[i].code.compareTo(method) == 0) {
 				thisMethod = lMethods[i];
 			}
 		}
-		
+
 		Map initialMap = readMapFile(args[0]);
 
-		// Solve the puzzle, using the method that the user chose
 		Direction[] thisSolution = thisMethod.Solve(initialMap, defaultCost);
 
-		//Print information about this solution
 		System.out.println(args[0] + "   " + method + "   " + thisMethod.Searched.size());
-			
-		if(thisSolution == null)
-		{
-			//No solution found :(
+
+		if (thisSolution == null) {
 			System.out.println("No solution found.");
-		}
-		else
-		{
+		} else {
 			int totalCost = 0;
-			//We found a solution, print all the steps to success!
-			for(int j = 0; j < thisSolution.length; j++)
-			{
+			for (int j = 0; j < thisSolution.length; j++) {
 				totalCost += defaultCost ? 1 : getCost(thisSolution[j]);
 				System.out.print(thisSolution[j].toString() + ";");
 			}
@@ -65,23 +47,20 @@ public class RobotNavigation {
 			System.out.println("Total Cost: " + totalCost);
 		}
 	}
-	
-	private static void InitMethods()
-	{
+
+	private static void InitMethods() {
 		lMethods = new SearchMethod[METHOD_COUNT];
 		lMethods[0] = new BFSStrategy();
 		lMethods[1] = new DFSStrategy();
 		lMethods[2] = new GreedyBestFirstStrategy();
 		lMethods[3] = new ASStrategy();
 		lMethods[4] = new CUS1Strategy();
-		lMethods[5] = new CUS2Strategy();
+		// lMethods[5] = new CUS2Strategy();
 	}
 
-	private static Map readMapFile(String fileName) // this allow only one puzzle to be specified in a problem file
-	{
+	private static Map readMapFile(String fileName) {
 
 		try {
-			// create file reading objects
 			FileReader reader = new FileReader(fileName);
 			BufferedReader file = new BufferedReader(reader);
 
@@ -95,23 +74,20 @@ public class RobotNavigation {
 			 * System.out.println(goalState[0] + " " + goalState[1]);
 			 */
 
-			// Create Map Class
 			Map initialMap = new Map(mapDimensions, initialState, goalState);
 
 			String line = null;
-			// Read the remaining lines in text file and add walls to map
 			while ((line = file.readLine()) != null) {
 				int[] wall = parseWallCoordinates(line);
 				initialMap.addWall(wall[0], wall[1], wall[2], wall[3]);
 			}
 
-			//initialMap.printMap();
-			
+			// initialMap.printMap();
+
 			file.close();
 
 			return initialMap;
 		} catch (FileNotFoundException ex) {
-			// Can't find file
 			System.out.println(fileName + " not found.");
 			System.exit(1);
 		} catch (IOException ex) {
@@ -180,18 +156,18 @@ public class RobotNavigation {
 
 		return null;
 	}
-	
+
 	private static int getCost(Direction aDirection) {
-		switch(aDirection) {
-			case Right:
-			case Left:
-				return 2;
-			case Up:
-				return 4;
-			case Down:
-				return 1;
-			default:
-				break;
+		switch (aDirection) {
+		case Right:
+		case Left:
+			return 2;
+		case Up:
+			return 4;
+		case Down:
+			return 1;
+		default:
+			break;
 		}
 		return 0;
 	}

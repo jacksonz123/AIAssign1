@@ -5,92 +5,66 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 public class GreedyBestFirstStrategy extends SearchMethod {
-	
-	public GreedyBestFirstStrategy()
-	{
+
+	public GreedyBestFirstStrategy() {
 		code = "GBFS";
 		longName = "Greedy Best-First Search";
 		Frontier = new LinkedList<RobotState>();
 		Searched = new LinkedList<RobotState>();
 	}
-	
-	public boolean addToFrontier(RobotState aState)
-	{
-		//We only want to add the new state to the fringe if it doesn't exist
-		// in the fringe or the searched list.
-		if(aState.GetNodesToState().contains(aState) || Frontier.contains(aState))
-		{
+
+	public boolean addToFrontier(RobotState aState) {
+		if (aState.GetNodesToState().contains(aState) || Frontier.contains(aState)) {
 			return false;
-		}
-		else
-		{
+		} else {
 			Frontier.add(aState);
 			return true;
 		}
 	}
-	
-	public Direction[] Solve(Map navMap, boolean aDefualtCost)
-	{
-		//put the start state in the Fringe to get explored.
+
+	public Direction[] Solve(Map navMap, boolean aDefualtCost) {
 		addToFrontier(new RobotState(navMap, aDefualtCost));
-		while(Frontier.size() > 0)
-		{
-			//get the next State
+		while (Frontier.size() > 0) {
 			RobotState thisState = popFrontier();
-			
-			//is this the goal state?
-			if(thisState.equalsRobotLocation(navMap.goalStateCoordinates))
-			{
+
+			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
 				return thisState.GetPathToState();
 			}
-			
-			//not the goal state, explore this node
+
 			ArrayList<RobotState> newStates = thisState.explore();
-			
-			for(int i = 0; i < newStates.size(); i++)
-			{
+
+			for (int i = 0; i < newStates.size(); i++) {
 				RobotState newChild = newStates.get(i);
-				//if you can add these new states to the fringe
-				if(addToFrontier(newChild))
-				{
-					//then, work out it's heuristic value
+				if (addToFrontier(newChild)) {
 					newChild.HeuristicValue = HeuristicValue(newStates.get(i), navMap.goalStateCoordinates);
 					newChild.setEvaluationFunction(newChild.HeuristicValue);
 				}
-				
+
 			}
-			
-			//Sort the fringe by it's Heuristic Value. The PuzzleComparator uses each nodes EvaluationFunction
-			// to determine a node's value, based on another. The sort method uses this to sort the Fringe.
+
 			Collections.sort(Frontier, new StateComparator());
 		}
-		
-		//no more nodes and no path found?
+
 		return null;
 	}
-	
-	protected RobotState popFrontier()
-	{
-		//remove a state from the top of the fringe so that it can be searched.
+
+	protected RobotState popFrontier() {
 		RobotState lState = Frontier.pollFirst();
-		
-		//add it to the list of searched states so that duplicates are recognised.
+
 		Searched.add(lState);
-		
+
 		return lState;
 	}
-	
-	private int HeuristicValue(RobotState aState, int[] goalState)
-	{
-		int[] robotLocation = {0 , 0};
+
+	private int HeuristicValue(RobotState aState, int[] goalState) {
+		int[] robotLocation = { 0, 0 };
 		try {
 			robotLocation = aState.findRobotCell();
 		} catch (InvalidMapException e) {
 			System.out.println("Error with heuristic evaluation");
 		}
-		// Using Manhattan's Distance
 		int heuristic = Math.abs(robotLocation[0] - goalState[0]) + Math.abs(robotLocation[1] - goalState[1]);
-				
+
 		return heuristic;
 	}
 }
