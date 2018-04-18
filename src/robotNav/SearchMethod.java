@@ -3,7 +3,9 @@ package robotNav;
 import java.util.*;
 
 public abstract class SearchMethod {
+	// Used for identifying method from command line
 	public String code;
+	// Actual name of method
 	public String longName;
 
 	/*
