@@ -116,6 +116,7 @@ public class RobotNavigation {
 		}
 
 		// Exit if error with dimension input
+		System.out.println("Dimensions could not be processed");
 		System.exit(1);
 
 		return null;
@@ -135,6 +136,7 @@ public class RobotNavigation {
 		}
 
 		// Exit if error with input
+		System.out.println("Please coordinates in correct format");
 		System.exit(1);
 
 		return null;
@@ -155,6 +157,7 @@ public class RobotNavigation {
 		}
 
 		// Exit if error with input
+		System.out.println("Please enter walls in correct format");
 		System.exit(1);
 
 		return null;
