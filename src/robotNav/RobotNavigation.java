@@ -8,33 +8,39 @@ import java.io.IOException;
 public class RobotNavigation {
 
 	public static final int METHOD_COUNT = 6;
-	public static SearchMethod[] lMethods;
+	public static SearchMethod[] searchMethods;
 	private static boolean defaultCost;
 
 	public static void main(String[] args) {
-		InitMethods();
+		InitSearchMethods();
 
+		// Check if boolean value is passed to change cost settings
 		if (args.length == 3) {
 			defaultCost = Boolean.parseBoolean(args[2]);
 		} else {
 			defaultCost = true;
 		}
 
+		// Get method from first String
 		String method = args[1];
 		SearchMethod thisMethod = null;
 
+		// Select appropriate method
 		for (int i = 0; i < METHOD_COUNT; i++) {
-			if (lMethods[i].code.compareTo(method) == 0) {
-				thisMethod = lMethods[i];
+			if (searchMethods[i].code.compareTo(method) == 0) {
+				thisMethod = searchMethods[i];
 			}
 		}
 
+		// Read Input File and create map
 		Map initialMap = readMapFile(args[0]);
 
+		// Solve the problem
 		Direction[] thisSolution = thisMethod.Solve(initialMap, defaultCost);
 
-		System.out.println(args[0] + "   " + method + "   " + thisMethod.Searched.size());
+		System.out.println(args[0] + "   " + method + "   " + thisMethod.nodesSearched);
 
+		// Print out response accordingly
 		if (thisSolution == null) {
 			System.out.println("No solution found.");
 		} else {
@@ -48,41 +54,38 @@ public class RobotNavigation {
 		}
 	}
 
-	private static void InitMethods() {
-		lMethods = new SearchMethod[METHOD_COUNT];
-		lMethods[0] = new BFSStrategy();
-		lMethods[1] = new DFSStrategy();
-		lMethods[2] = new GreedyBestFirstStrategy();
-		lMethods[3] = new ASStrategy();
-		lMethods[4] = new CUS1Strategy();
-		// lMethods[5] = new CUS2Strategy();
+	// Initialize search methods
+	private static void InitSearchMethods() {
+		searchMethods = new SearchMethod[METHOD_COUNT];
+		searchMethods[0] = new BFSStrategy();
+		searchMethods[1] = new DFSStrategy();
+		searchMethods[2] = new GreedyBestFirstStrategy();
+		searchMethods[3] = new ASStrategy();
+		searchMethods[4] = new CUS1Strategy();
+		searchMethods[5] = new CUS2Strategy();
 	}
 
 	private static Map readMapFile(String fileName) {
 
 		try {
+			// Set up file reader
 			FileReader reader = new FileReader(fileName);
 			BufferedReader file = new BufferedReader(reader);
-
+			
+			// parse map dimensions
 			int[] mapDimensions = parseGridDimensions(file.readLine());
 			int[] initialState = parseStateCoordinates(file.readLine());
 			int[] goalState = parseStateCoordinates(file.readLine());
-
-			/*
-			 * System.out.println(mapDimensions[0] + " " + mapDimensions[1]);
-			 * System.out.println(initialState[0] + " " + initialState[1]);
-			 * System.out.println(goalState[0] + " " + goalState[1]);
-			 */
-
+			
+			// create map
 			Map initialMap = new Map(mapDimensions, initialState, goalState);
-
+			
+			// Read remaining lines to add walls
 			String line = null;
 			while ((line = file.readLine()) != null) {
 				int[] wall = parseWallCoordinates(line);
 				initialMap.addWall(wall[0], wall[1], wall[2], wall[3]);
 			}
-
-			// initialMap.printMap();
 
 			file.close();
 
@@ -157,8 +160,9 @@ public class RobotNavigation {
 		return null;
 	}
 
-	private static int getCost(Direction aDirection) {
-		switch (aDirection) {
+	// Get the Cost for custom costing
+	private static int getCost(Direction direction) {
+		switch (direction) {
 		case Right:
 		case Left:
 			return 2;

@@ -8,46 +8,54 @@ public class BFSStrategy extends SearchMethod {
 	public BFSStrategy() {
 		code = "BFS";
 		longName = "Breadth-First Search";
-		Frontier = new LinkedList<RobotState>();
-		Searched = new LinkedList<RobotState>();
+		frontier = new LinkedList<RobotState>();
+		nodesSearched = 0;
 	}
 
 	protected RobotState popFrontier() {
-		RobotState thisState = Frontier.pop();
-		Searched.add(thisState);
+		// retrieve first element from frontier
+		RobotState thisState = frontier.pop();
+		// increment number of searched nodes
+		nodesSearched++;
 
 		return thisState;
 	}
 
-	public Direction[] Solve(Map navigationMap, boolean aDefualtCost) {
-		addToFrontier(new RobotState(navigationMap, aDefualtCost));
+	public boolean addToFrontier(RobotState state) {
+		// Checks that node has not been searched on current path and is not already on
+		// Frontier
+		if (state.GetNodesToState().contains(state) || frontier.contains(state)) {
+			// State has already been searched, discard
+			return false;
+		} else {
+			// Add last to ensure FIFO
+			frontier.addLast(state);
+			return true;
+		}
+	}
 
-		ArrayList<RobotState> newStates = new ArrayList<RobotState>();
+	public Direction[] Solve(Map navMap, boolean defualtCost) {
+		// Creates the initial state and adds to Frontier
+		addToFrontier(new RobotState(navMap, defualtCost));
 
-		while (Frontier.size() > 0) {
+		// Keep searching until all states are exhausted
+		while (frontier.size() > 0) {
+			// Get Node from Frontier
 			RobotState thisState = popFrontier();
-
-			if (thisState.equalsRobotLocation(navigationMap.goalStateCoordinates)) {
+			// Check if goal state
+			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
+				// return path
 				return thisState.GetPathToState();
 			} else {
-				newStates = thisState.explore();
-
+				// expand current node
+				ArrayList<RobotState> newStates = thisState.explore();
+				// For each child, add to Frontier
 				for (int i = 0; i < newStates.size(); i++) {
 					addToFrontier(newStates.get(i));
 				}
 			}
 		}
-
+		// if no solution is found
 		return null;
 	}
-
-	public boolean addToFrontier(RobotState aState) {
-		if (aState.GetNodesToState().contains(aState) || Frontier.contains(aState)) {
-			return false;
-		} else {
-			Frontier.addLast(aState);
-			return true;
-		}
-	}
-
 }

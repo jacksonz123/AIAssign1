@@ -5,9 +5,9 @@ public class CantMoveThatWayException extends Exception {
 	public RobotState Source;
 	public Direction Direction;
 	
-	public CantMoveThatWayException(RobotState source, Direction aDirection)
+	public CantMoveThatWayException(RobotState source, Direction direction)
 	{
 		Source = source;
-		Direction = aDirection;
+		Direction = direction;
 	}
 }

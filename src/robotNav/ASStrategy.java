@@ -6,64 +6,67 @@ import java.util.LinkedList;
 
 public class ASStrategy extends SearchMethod {
 
+	/*
+	 * Constructor for A*
+	 */
 	public ASStrategy() {
 		code = "AS";
 		longName = "A Star Search";
-		Frontier = new LinkedList<RobotState>();
-		Searched = new LinkedList<RobotState>();
+		frontier = new LinkedList<RobotState>();
+		nodesSearched = 0;
 	}
 
-	public boolean addToFrontier(RobotState aState) {
-		if (aState.GetNodesToState().contains(aState) || Frontier.contains(aState)) {
+	protected RobotState popFrontier() {
+		// retrieve first element from frontier
+		RobotState state = frontier.pollFirst();
+		// increment number of searched nodes
+		nodesSearched++;
+
+		return state;
+	}
+
+	public boolean addToFrontier(RobotState state) {
+		// Checks that node has not been searched on current path and is not already on
+		// Frontier
+		if (state.GetNodesToState().contains(state) || frontier.contains(state)) {
+			// State has already been searched, discard
 			return false;
 		} else {
-			Frontier.add(aState);
+			// Add to Frontier
+			frontier.add(state);
 			return true;
 		}
 	}
 
-	public Direction[] Solve(Map navMap, boolean aDefualtCost) {
-		addToFrontier(new RobotState(navMap, aDefualtCost));
-		while (Frontier.size() > 0) {
+	public Direction[] Solve(Map navMap, boolean defualtCost) {
+		// Creates the initial state and adds to Frontier
+		addToFrontier(new RobotState(navMap, defualtCost));
+		// Keep searching until all states are exhausted
+		while (frontier.size() > 0) {
+			// Get Node from Frontier
 			RobotState thisState = popFrontier();
-
+			// Check if goal state
 			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
+				// return path
 				return thisState.GetPathToState();
 			}
-
+			// expand current node
 			ArrayList<RobotState> newStates = thisState.explore();
-
+			// For each child, add to Frontier
 			for (int i = 0; i < newStates.size(); i++) {
 				RobotState newChild = newStates.get(i);
 				if (addToFrontier(newChild)) {
-					newChild.HeuristicValue = HeuristicValue(newStates.get(i), navMap.goalStateCoordinates);
-					newChild.setEvaluationFunction(newChild.HeuristicValue + newChild.Cost);
+					// Set heuristic value of node
+					newChild.heuristicValue = HeuristicValue(newStates.get(i), navMap.goalStateCoordinates);
+					// set evaluation function f(n) = h(n) + g(n)
+					newChild.setEvaluationFunction(newChild.heuristicValue + newChild.cost);
 				}
 
 			}
-
-			Collections.sort(Frontier, new StateComparator());
+			// sort according to evaluation function
+			Collections.sort(frontier, new StateComparator());
 		}
+		// If no solution is found
 		return null;
-	}
-
-	protected RobotState popFrontier() {
-		RobotState lState = Frontier.pollFirst();
-
-		Searched.add(lState);
-
-		return lState;
-	}
-
-	private int HeuristicValue(RobotState aState, int[] goalState) {
-		int[] robotLocation = { 0, 0 };
-		try {
-			robotLocation = aState.findRobotCell();
-		} catch (InvalidMapException e) {
-			System.out.println("Error with heuristic evaluation");
-		}
-		int heuristic = Math.abs(robotLocation[0] - goalState[0]) + Math.abs(robotLocation[1] - goalState[1]);
-
-		return heuristic;
 	}
 }

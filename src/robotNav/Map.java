@@ -7,26 +7,29 @@ public class Map {
 	public int width;
 	public int[] goalStateCoordinates;
 
-	public Map(int[] aDimensions, int[] aInitialStateCoordinates, int[] aGoalStateCoordinates) {
-		width = aDimensions[1];
-		length = aDimensions[0];
+	public Map(int[] dimensions, int[] initialStateCoordinates, int[] goalStateCoordinates) {
+		width = dimensions[1];
+		length = dimensions[0];
+		// set dimensions of 2D map
 		map = new char[width][length];
 
-		for (int i = 0; i < aDimensions[1]; i++) {
-			for (int j = 0; j < aDimensions[0]; j++) {
+		// Initialize the board
+		for (int i = 0; i < dimensions[1]; i++) {
+			for (int j = 0; j < dimensions[0]; j++) {
 				map[i][j] = 'O';
 			}
 		}
 
-		map[aInitialStateCoordinates[0]][aInitialStateCoordinates[1]] = 'X';
-		goalStateCoordinates = aGoalStateCoordinates;
+		// Mark the Robot as 'X'
+		map[initialStateCoordinates[0]][initialStateCoordinates[1]] = 'X';
+		this.goalStateCoordinates = goalStateCoordinates;
 	}
 
-	public Map(char[][] aMap, int aLength, int aWidth, int[] aGoalStateCoordinates) {
-		map = aMap;
-		length = aLength;
-		width = aWidth;
-		goalStateCoordinates = aGoalStateCoordinates;
+	public Map(char[][] map, int length, int width, int[] goalStateCoordinates) {
+		this.map = map;
+		this.length = length;
+		this.width = width;
+		this.goalStateCoordinates = goalStateCoordinates;
 	}
 
 	public void addWall(int x, int y, int cellsWide, int cellsLong) {
@@ -40,7 +43,8 @@ public class Map {
 		}
 	}
 
-	// For Visualisation of Map
+	// For Visualization of Map
+	// Used For Debugging
 	public void printMap() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < length; j++) {

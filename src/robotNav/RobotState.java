@@ -1,6 +1,5 @@
 package robotNav;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -8,45 +7,49 @@ import java.util.List;
 
 public class RobotState implements Comparable<RobotState> {
 	public Map map;
-	public RobotState Parent;
-	public ArrayList<RobotState> Children;
-	public int Cost;
-	public int HeuristicValue;
-	private int EvaluationFunction;
-	public Direction PathFromParent;
+	public RobotState parent;
+	public ArrayList<RobotState> children;
+	public int cost;
+	public int heuristicValue;
+	private int evaluationFunction;
+	public Direction pathFromParent;
 	// For Manipulating Cost Set Up
 	private static boolean defaultCost;
 
 	// For Creating Child states
-	public RobotState(RobotState aParent, Direction aFromParent, Map aMap) {
-		Parent = aParent;
-		PathFromParent = aFromParent;
-		map = aMap;
-		Cost = defaultCost ? Parent.Cost + 1 : Parent.Cost;
-		EvaluationFunction = 0;
-		HeuristicValue = 0;
+	public RobotState(RobotState parent, Direction fromParent, Map map) {
+		this.parent = parent;
+		pathFromParent = fromParent;
+		this.map = map;
+		cost = defaultCost ? parent.cost + 1 : parent.cost;
+		evaluationFunction = 0;
+		heuristicValue = 0;
 	}
 
 	// For initial state
-	public RobotState(Map aMap, boolean aDefaultCost) {
-		Parent = null;
-		PathFromParent = null;
-		Cost = 0;
-		map = aMap;
-		EvaluationFunction = 0;
-		HeuristicValue = 0;
-		defaultCost = aDefaultCost;
+	public RobotState(Map map, boolean useDefaultCost) {
+		parent = null;
+		pathFromParent = null;
+		cost = 0;
+		this.map = map;
+		evaluationFunction = 0;
+		heuristicValue = 0;
+		defaultCost = useDefaultCost;
 	}
 
 	public int getEvaluationFunction() {
-		return EvaluationFunction;
+		return evaluationFunction;
 	}
 
 	public void setEvaluationFunction(int value) {
-		EvaluationFunction = value;
+		evaluationFunction = value;
 	}
 
+	/*
+	 * Find Location of robot
+	 */
 	public int[] findRobotCell() throws InvalidMapException {
+		// Go through map array looking for Robot
 		for (int i = 0; i < map.map.length; i++) {
 			for (int j = 0; j < map.map[i].length; j++) {
 				if (map.map[i][j] == 'X') {
@@ -59,11 +62,14 @@ public class RobotState implements Comparable<RobotState> {
 		throw new InvalidMapException(this);
 	}
 
+	/*
+	 * Get the possible actions from current location
+	 */
 	public Direction[] getPossibleActions() {
 		// Collection as list as can be dynamic with sizing
 		List<Direction> result = new ArrayList<Direction>();
-		// find where the blank cell is and store the Directions.
-		int[] robotLocation = { 0, 0 }; // dummy value to avoid errors.
+		// Initialize array
+		int[] robotLocation = new int[2];
 
 		try {
 			robotLocation = findRobotCell();
@@ -104,12 +110,12 @@ public class RobotState implements Comparable<RobotState> {
 		return possibleDirections;
 	}
 
-	public RobotState move(Direction aDirection) throws CantMoveThatWayException {
-		RobotState result = new RobotState(this, aDirection,
+	public RobotState move(Direction direction) throws CantMoveThatWayException {
+		RobotState result = new RobotState(this, direction,
 				new Map(cloneArray(this.map.map), this.map.length, this.map.width, this.map.goalStateCoordinates));
 
 		// find the robots location
-		int[] robotLocation = { 0, 0 };
+		int[] robotLocation = new int[2];
 		try {
 			robotLocation = findRobotCell();
 		} catch (InvalidMapException e) {
@@ -117,42 +123,52 @@ public class RobotState implements Comparable<RobotState> {
 			System.exit(1);
 		}
 		try {
-			if (aDirection == Direction.Up) {
+			// If moving up change location of robot
+			if (direction == Direction.Up) {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0]][robotLocation[1] - 1] = 'X';
+				// Change costing to custom value
 				if (!defaultCost) {
-					result.Cost += 4;
+					result.cost += 4;
 				}
-			} else if (aDirection == Direction.Down) {
+				// If moving down change location of robot
+			} else if (direction == Direction.Down) {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0]][robotLocation[1] + 1] = 'X';
+				// Change costing to custom value
 				if (!defaultCost) {
-					result.Cost += 1;
+					result.cost += 1;
 				}
-			} else if (aDirection == Direction.Left) {
+				// If moving left change location of robot
+			} else if (direction == Direction.Left) {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0] - 1][robotLocation[1]] = 'X';
+				// Change costing to custom value
 				if (!defaultCost) {
-					result.Cost += 2;
+					result.cost += 2;
 				}
+				// If moving right change location of robot
 			} else {
 				result.map.map[robotLocation[0]][robotLocation[1]] = 'O';
 				result.map.map[robotLocation[0] + 1][robotLocation[1]] = 'X';
+				// Change costing to custom value
 				if (!defaultCost) {
-					result.Cost += 2;
+					result.cost += 2;
 				}
 			}
 			return result;
 		} catch (IndexOutOfBoundsException ex) {
-			throw new CantMoveThatWayException(this, aDirection);
+			// If cannot move, through exception
+			throw new CantMoveThatWayException(this, direction);
 		}
 	}
 
 	@Override
-	public boolean equals(Object aObject) {
-		RobotState aState = (RobotState) aObject;
+	public boolean equals(Object object) {
+		RobotState aState = (RobotState) object;
 		// State is same if robot cell is in the same spot
 		try {
+			// Compare the two Robot Locations
 			int[] robotOne = aState.findRobotCell();
 			int[] robotTwo = this.findRobotCell();
 			return robotOne[0] == robotTwo[0] && robotOne[1] == robotTwo[1];
@@ -177,48 +193,54 @@ public class RobotState implements Comparable<RobotState> {
 	}
 
 	// this is to allow the TreeSet to sort it.
-	public int compareTo(RobotState aState) {
-		return EvaluationFunction - aState.getEvaluationFunction();
+	public int compareTo(RobotState state) {
+		return evaluationFunction - state.getEvaluationFunction();
 	}
 
+	/*
+	 * Method which explores that current state and returns the children states
+	 */
 	public ArrayList<RobotState> explore() {
 		// populate children
 		Direction[] possibleMoves = getPossibleActions();
-		Children = new ArrayList<RobotState>();
+		children = new ArrayList<RobotState>();
 		for (int i = 0; i < possibleMoves.length; i++) {
 			try {
-				Children.add(move(possibleMoves[i]));
+				children.add(move(possibleMoves[i]));
 			} catch (CantMoveThatWayException e) {
 				System.out.println("There was an error in processing! Aborting...");
 				System.exit(1);
 			}
 		}
-		return Children;
+		return children;
 	}
 
+	/*
+	 * Gets the current path to state
+	 */
 	public Direction[] GetPathToState() {
 		Direction result[];
 
-		if (Parent == null) {
+		if (parent == null) {
 			result = new Direction[0];
 			return result;
 		} else {
-			Direction[] pathToParent = Parent.GetPathToState();
+			Direction[] pathToParent = parent.GetPathToState();
 			result = new Direction[pathToParent.length + 1];
 			for (int i = 0; i < pathToParent.length; i++) {
 				result[i] = pathToParent[i];
 			}
-			result[result.length - 1] = this.PathFromParent;
+			result[result.length - 1] = this.pathFromParent;
 			return result;
 		}
 	}
 
 	public LinkedList<RobotState> GetNodesToState() {
 		LinkedList<RobotState> result = new LinkedList<RobotState>();
-		RobotState parentState = Parent;
+		RobotState parentState = parent;
 		while (parentState != null) {
 			result.add(parentState);
-			parentState = parentState.Parent;
+			parentState = parentState.parent;
 		}
 		return result;
 	}

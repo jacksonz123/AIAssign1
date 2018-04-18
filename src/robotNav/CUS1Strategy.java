@@ -9,49 +9,58 @@ public class CUS1Strategy extends SearchMethod {
 	public CUS1Strategy() {
 		code = "UCS";
 		longName = "Uniform Cost Search";
-		Frontier = new LinkedList<RobotState>();
-		Searched = new LinkedList<RobotState>();
+		frontier = new LinkedList<RobotState>();
+		nodesSearched = 0;
 	}
 
 	protected RobotState popFrontier() {
-		RobotState thisState = Frontier.pop();
-		Searched.add(thisState);
+		// retrieve first element from frontier
+		RobotState state = frontier.pollFirst();
+		// increment number of searched nodes
+		nodesSearched++;
 
-		return thisState;
+		return state;
 	}
 
-	public Direction[] Solve(Map navigationMap, boolean aDefualtCost) {
-		addToFrontier(new RobotState(navigationMap, aDefualtCost));
-		while (Frontier.size() > 0) {
-			RobotState thisState = popFrontier();
-
-			if (thisState.equalsRobotLocation(navigationMap.goalStateCoordinates)) {
-				return thisState.GetPathToState();
-			}
-
-			ArrayList<RobotState> newStates = thisState.explore();
-
-			for (int i = 0; i < newStates.size(); i++) {
-				RobotState newChild = newStates.get(i);
-				if (addToFrontier(newChild)) {
-					newChild.setEvaluationFunction(newChild.Cost);
-				}
-
-			}
-
-			Collections.sort(Frontier, new StateComparator());
-		}
-
-		return null;
-	}
-
-	public boolean addToFrontier(RobotState aState) {
-		if (aState.GetNodesToState().contains(aState) || Frontier.contains(aState)) {
+	public boolean addToFrontier(RobotState state) {
+		// Checks that node has not been searched on current path and is not already on
+		// Frontier
+		if (state.GetNodesToState().contains(state) || frontier.contains(state)) {
+			// State has already been searched, discard
 			return false;
 		} else {
-			Frontier.addLast(aState);
+			// Add to Frontier
+			frontier.add(state);
 			return true;
 		}
 	}
 
+	public Direction[] Solve(Map navMap, boolean defualtCost) {
+		// Creates the initial state and adds to Frontier
+		addToFrontier(new RobotState(navMap, defualtCost));
+		// Keep searching until all states are exhausted
+		while (frontier.size() > 0) {
+			// Get Node from Frontier
+			RobotState thisState = popFrontier();
+			// Check if goal state
+			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
+				// return path
+				return thisState.GetPathToState();
+			}
+			// expand current node
+			ArrayList<RobotState> newStates = thisState.explore();
+			// For each child, add to Frontier
+			for (int i = 0; i < newStates.size(); i++) {
+				RobotState newChild = newStates.get(i);
+				if (addToFrontier(newChild)) {
+					// set evaluation function f(n) = g(n) (path cost)
+					newChild.setEvaluationFunction(newChild.cost);
+				}
+
+			}
+			// sort according to evaluation function
+			Collections.sort(frontier, new StateComparator());
+		}
+		return null;
+	}
 }
