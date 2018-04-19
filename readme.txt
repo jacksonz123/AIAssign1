@@ -20,9 +20,12 @@ BFS		|Breadth-first Search
 DFS		|Depth-first Search
 GBFS		|Greedy Best-first Search
 AS		|A* Search
-UCS		|Uniform Cost Search
+IDS		|Iterative Deepening Search
+IDA		|Iterative Deepening A* Search
 
 Known Bugs:
+- IDS searches until MAX_INTEGER for problems with no possible path to solution
+- IDA can not handle problems with no possible path to solution and will infinitely loop
 
 Acknowledgements/Resources:
 - nPuzzler: I extended the nPuzzler to use the above search methods to be able to understand how Searches work and are implemented in Java.

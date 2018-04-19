@@ -12,7 +12,7 @@ public class RobotNavigation {
 	private static boolean defaultCost;
 
 	public static void main(String[] args) {
-		InitSearchMethods();
+		initSearchMethods();
 
 		// Check if boolean value is passed to change cost settings
 		if (args.length == 3) {
@@ -53,16 +53,16 @@ public class RobotNavigation {
 			System.out.println("Total Cost: " + totalCost);
 		}
 	}
-
+	
 	// Initialize search methods
-	private static void InitSearchMethods() {
+	private static void initSearchMethods() {
 		searchMethods = new SearchMethod[METHOD_COUNT];
 		searchMethods[0] = new BFSStrategy();
 		searchMethods[1] = new DFSStrategy();
 		searchMethods[2] = new GreedyBestFirstStrategy();
 		searchMethods[3] = new ASStrategy();
-		searchMethods[4] = new CUS1Strategy();
-		searchMethods[5] = new CUS2Strategy();
+		searchMethods[4] = new IDAStrategy();
+		searchMethods[5] = new IDSStrategy();
 	}
 
 	private static Map readMapFile(String fileName) {
@@ -71,15 +71,15 @@ public class RobotNavigation {
 			// Set up file reader
 			FileReader reader = new FileReader(fileName);
 			BufferedReader file = new BufferedReader(reader);
-			
+
 			// parse map dimensions
 			int[] mapDimensions = parseGridDimensions(file.readLine());
 			int[] initialState = parseStateCoordinates(file.readLine());
 			int[] goalState = parseStateCoordinates(file.readLine());
-			
+
 			// create map
 			Map initialMap = new Map(mapDimensions, initialState, goalState);
-			
+
 			// Read remaining lines to add walls
 			String line = null;
 			while ((line = file.readLine()) != null) {
