@@ -24,7 +24,7 @@ public class DFSStrategy extends SearchMethod {
 	public boolean addToFrontier(RobotState state) {
 		// Checks that node has not been searched on current path and is not already on
 		// Frontier
-		if (state.GetNodesToState().contains(state) || frontier.contains(state)) {
+		if (state.getNodesToState().contains(state) || frontier.contains(state)) {
 			// State has already been searched, discard
 			return false;
 		} else {
@@ -34,7 +34,7 @@ public class DFSStrategy extends SearchMethod {
 		}
 	}
 
-	public Direction[] Solve(Map navMap, boolean defualtCost) {
+	public Direction[] solve(Map navMap, boolean defualtCost) {
 		// Creates the initial state and adds to Frontier
 		addToFrontier(new RobotState(navMap, defualtCost));
 
@@ -45,7 +45,7 @@ public class DFSStrategy extends SearchMethod {
 			// Check if goal state
 			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
 				// return path
-				return thisState.GetPathToState();
+				return thisState.getPathToState();
 			} else {
 				// expand current node
 				ArrayList<RobotState> newStates = thisState.explore();

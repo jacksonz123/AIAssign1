@@ -30,7 +30,7 @@ public class IDAStrategy extends SearchMethod {
 	public boolean addToFrontier(RobotState state) {
 		// Checks that node has not been searched on current path and is not already on
 		// Frontier
-		if (state.GetNodesToState().contains(state) || frontier.contains(state)) {
+		if (state.getNodesToState().contains(state) || frontier.contains(state)) {
 			// State has already been searched, discard
 			return false;
 		} else {
@@ -53,7 +53,7 @@ public class IDAStrategy extends SearchMethod {
 			// Check if goal state
 			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
 				// return path
-				return thisState.GetPathToState();
+				return thisState.getPathToState();
 			}
 			// expand current node
 			ArrayList<RobotState> newStates = thisState.explore();
@@ -61,7 +61,7 @@ public class IDAStrategy extends SearchMethod {
 			for (int i = 0; i < newStates.size(); i++) {
 				RobotState newChild = newStates.get(i);
 				// Set heuristic value of node
-				newChild.heuristicValue = HeuristicValue(newStates.get(i), navMap.goalStateCoordinates);
+				newChild.heuristicValue = heuristicValue(newStates.get(i), navMap.goalStateCoordinates);
 				// set evaluation function f(n) = h(n) + g(n)
 				newChild.setEvaluationFunction(newChild.heuristicValue + newChild.cost);
 				if (newChild.getEvaluationFunction() <= cutoff) {
@@ -82,11 +82,11 @@ public class IDAStrategy extends SearchMethod {
 		return null;
 	}
 
-	public Direction[] Solve(Map navMap, boolean defaultCost) {
+	public Direction[] solve(Map navMap, boolean defaultCost) {
 		// Creates the initial state
 		RobotState initialState = new RobotState(navMap, defaultCost);
 		// Set heuristic value of node
-		initialState.heuristicValue = HeuristicValue(initialState, navMap.goalStateCoordinates);
+		initialState.heuristicValue = heuristicValue(initialState, navMap.goalStateCoordinates);
 		// set evaluation function f(n) = h(n) + g(n)
 		initialState.setEvaluationFunction(initialState.heuristicValue + initialState.cost);
 		cutoff = initialState.getEvaluationFunction();

@@ -25,7 +25,7 @@ public class GreedyBestFirstStrategy extends SearchMethod {
 	public boolean addToFrontier(RobotState state) {
 		// Checks that node has not been searched on current path and is not already on
 		// Frontier
-		if (state.GetNodesToState().contains(state) || frontier.contains(state)) {
+		if (state.getNodesToState().contains(state) || frontier.contains(state)) {
 			// State has already been searched, discard
 			return false;
 		} else {
@@ -35,7 +35,7 @@ public class GreedyBestFirstStrategy extends SearchMethod {
 		}
 	}
 
-	public Direction[] Solve(Map navMap, boolean defualtCost) {
+	public Direction[] solve(Map navMap, boolean defualtCost) {
 		// Creates the initial state and adds to Frontier
 		addToFrontier(new RobotState(navMap, defualtCost));
 		// Keep searching until all states are exhausted
@@ -45,7 +45,7 @@ public class GreedyBestFirstStrategy extends SearchMethod {
 			// Check if goal state
 			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
 				// return path
-				return thisState.GetPathToState();
+				return thisState.getPathToState();
 			}
 			// expand current node
 			ArrayList<RobotState> newStates = thisState.explore();
@@ -54,7 +54,7 @@ public class GreedyBestFirstStrategy extends SearchMethod {
 				RobotState newChild = newStates.get(i);
 				if (addToFrontier(newChild)) {
 					// Set heuristic value of node
-					newChild.heuristicValue = HeuristicValue(newStates.get(i), navMap.goalStateCoordinates);
+					newChild.heuristicValue = heuristicValue(newStates.get(i), navMap.goalStateCoordinates);
 					// set evaluation function f(n) = h(n)
 					newChild.setEvaluationFunction(newChild.heuristicValue);
 				}

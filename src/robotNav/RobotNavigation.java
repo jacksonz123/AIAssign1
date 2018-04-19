@@ -36,7 +36,7 @@ public class RobotNavigation {
 		Map initialMap = readMapFile(args[0]);
 
 		// Solve the problem
-		Direction[] thisSolution = thisMethod.Solve(initialMap, defaultCost);
+		Direction[] thisSolution = thisMethod.solve(initialMap, defaultCost);
 
 		System.out.println(args[0] + "   " + method + "   " + thisMethod.nodesSearched);
 

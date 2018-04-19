@@ -218,14 +218,14 @@ public class RobotState implements Comparable<RobotState> {
 	/*
 	 * Gets the current path to state
 	 */
-	public Direction[] GetPathToState() {
+	public Direction[] getPathToState() {
 		Direction result[];
 
 		if (parent == null) {
 			result = new Direction[0];
 			return result;
 		} else {
-			Direction[] pathToParent = parent.GetPathToState();
+			Direction[] pathToParent = parent.getPathToState();
 			result = new Direction[pathToParent.length + 1];
 			for (int i = 0; i < pathToParent.length; i++) {
 				result[i] = pathToParent[i];
@@ -235,7 +235,7 @@ public class RobotState implements Comparable<RobotState> {
 		}
 	}
 
-	public LinkedList<RobotState> GetNodesToState() {
+	public LinkedList<RobotState> getNodesToState() {
 		LinkedList<RobotState> result = new LinkedList<RobotState>();
 		RobotState parentState = parent;
 		while (parentState != null) {

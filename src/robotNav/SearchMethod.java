@@ -11,7 +11,7 @@ public abstract class SearchMethod {
 	/*
 	 * Method for solving the puzzle
 	 */
-	public abstract Direction[] Solve(Map navMap, boolean defualtCost);
+	public abstract Direction[] solve(Map navMap, boolean defualtCost);
 
 	// Frontier for storing nodes
 	public LinkedList<RobotState> frontier;
@@ -33,7 +33,7 @@ public abstract class SearchMethod {
 	/*
 	 * Get Manhattan distance from robot to goal Used as admissible heuristic
 	 */
-	int HeuristicValue(RobotState state, int[] goalState) {
+	int heuristicValue(RobotState state, int[] goalState) {
 		// Initialize array to default
 		int[] robotLocation = { 0, 0 };
 		try {

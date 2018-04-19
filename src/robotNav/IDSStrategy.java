@@ -24,7 +24,7 @@ public class IDSStrategy extends SearchMethod {
 	public boolean addToFrontier(RobotState state) {
 		// Checks that node has not been searched on current path and is not already on
 		// Frontier
-		if (state.GetNodesToState().contains(state) || frontier.contains(state)) {
+		if (state.getNodesToState().contains(state) || frontier.contains(state)) {
 			// State has already been searched, discard
 			return false;
 		} else {
@@ -47,7 +47,7 @@ public class IDSStrategy extends SearchMethod {
 			// Check if goal state
 			if (thisState.equalsRobotLocation(navMap.goalStateCoordinates)) {
 				// return path
-				return thisState.GetPathToState();
+				return thisState.getPathToState();
 			}
 			else {
 				// expand current node
@@ -56,7 +56,7 @@ public class IDSStrategy extends SearchMethod {
 				// Must do in reverse order to ensure LIFO
 				for (int i = newStates.size() - 1; i > -1; i--) {
 					// Only add to frontier if under depth limit
-					if (newStates.get(i).GetPathToState().length < depth) {
+					if (newStates.get(i).getPathToState().length < depth) {
 						addToFrontier(newStates.get(i));
 					}
 				}
@@ -66,7 +66,7 @@ public class IDSStrategy extends SearchMethod {
 		return null;
 	}
 
-	public Direction[] Solve(Map navMap, boolean defaultCost) {
+	public Direction[] solve(Map navMap, boolean defaultCost) {
 		RobotState initialState = new RobotState(navMap, defaultCost);
 		for (int depth = 0; depth < Integer.MAX_VALUE; depth++) {
 			Direction[] result = depthLimitedSearch(initialState, navMap, depth);
